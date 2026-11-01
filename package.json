@@ -1,0 +1,65 @@
+{
+  "name": "dsh-obsidian-vault-studio",
+  "version": "0.1.8",
+  "description": "Obsidian Vault Studio for DeepSeek Harness: local vault index, hybrid semantic search, and safe note writing.",
+  "type": "module",
+  "license": "MIT",
+  "author": "spark-ai-boy",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/spark-ai-boy/dsh-obsidian-vault-studio.git"
+  },
+  "homepage": "https://github.com/spark-ai-boy/dsh-obsidian-vault-studio#readme",
+  "bugs": {
+    "url": "https://github.com/spark-ai-boy/dsh-obsidian-vault-studio/issues"
+  },
+  "keywords": [
+    "deepseek",
+    "deepseek-harness",
+    "obsidian",
+    "plugin",
+    "rag",
+    "pkm",
+    "knowledge-base"
+  ],
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "src/host/*.js",
+    "cordis.patch.yml",
+    "locale/*.json",
+    "icon.svg",
+    "docs/images/*.png",
+    "LICENSE",
+    "README.md",
+    "README.en.md"
+  ],
+  "engines": {
+    "dsh": ">=0.2.1-rc.5"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-api-remotes",
+        "@deepseek-ai/dsh-client-locale",
+        "@deepseek-ai/dsh-client-ui-layout",
+        "@deepseek-ai/dsh-client-ui-sidebar"
+      ]
+    }
+  },
+  "scripts": {
+    "test": "node --test \"tests/*.test.js\"",
+    "check": "node --check index.js && node --check client.js && node --test \"tests/*.test.js\""
+  }
+}

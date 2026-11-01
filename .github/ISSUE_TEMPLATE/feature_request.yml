@@ -1,0 +1,49 @@
+name: Feature request
+description: Suggest a retrieval, dashboard, or workflow improvement.
+title: "[feat] "
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Vault Studio is local-first and proposal-first. Features that silently overwrite notes or upload vault contents are out of scope.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What are you trying to do that is currently hard?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Dashboard
+        - Search / retrieval
+        - Notes / writes
+        - Settings / embeddings
+        - Agent tools
+        - Performance
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety and privacy
+      options:
+        - label: This request keeps writes proposal-first and does not add silent overwrite/delete behavior.
+          required: true
+        - label: This request does not require uploading the whole vault by default.
+          required: true

@@ -1,0 +1,7 @@
+- insert:
+    - id: obsidian-vault-studio
+      name: dsh-obsidian-vault-studio
+      config:
+        vaultPath: ""
+        indexMode: keyword
+        conversationEnabled: false
