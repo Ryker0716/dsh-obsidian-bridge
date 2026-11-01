@@ -4,7 +4,7 @@
 
 把本地 Obsidian 知识库接入 DeepSeek Harness。模型经你授权后可以检索笔记、读取片段、组装上下文，并以“先提案、后写入”的方式创建或追加笔记。索引、向量和统计都留在本机。
 
-[English](README.en.md)
+[English](README.md)
 
 [![npm version](https://img.shields.io/npm/v/dsh-obsidian-bridge)](https://www.npmjs.com/package/dsh-obsidian-bridge)[![GitHub stars](https://img.shields.io/github/stars/spark-ai-boy/dsh-obsidian-bridge?style=social)](https://github.com/spark-ai-boy/dsh-obsidian-bridge)
 

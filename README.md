@@ -4,7 +4,7 @@
 
 Connect a local Obsidian vault to DeepSeek Harness. After you grant access, the model can search your notes, read relevant passages, build grounded context, and create or append notes through a proposal-first workflow. The index, embeddings, and statistics stay on your machine.
 
-[中文](README.md)
+[中文](README.zh.md)
 
 [![npm version](https://img.shields.io/npm/v/dsh-obsidian-bridge)](https://www.npmjs.com/package/dsh-obsidian-bridge)[![GitHub stars](https://img.shields.io/github/stars/spark-ai-boy/dsh-obsidian-bridge?style=social)](https://github.com/spark-ai-boy/dsh-obsidian-bridge)
 
