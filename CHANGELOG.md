@@ -12,6 +12,16 @@ All notable changes are documented here. The format follows [Keep a Changelog](h
 
 - Added a regression check that the client module id matches `package.json`'s package name.
 
+## [0.1.16] - 2026-11-01
+
+### Fixed
+
+- The propose-write tool now includes the proposal id in its rendered output so an agent can pass it to `obsidian_apply_write`.
+
+### Tests
+
+- Added a regression check that the propose-write output exposes the proposal id.
+
 ## [0.1.11] - 2026-11-01
 
 ### Fixed

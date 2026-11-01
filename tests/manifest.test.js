@@ -55,6 +55,11 @@ test("Host entry declares tools, a remote service, and approval policy", async (
   assert.match(host, /systemPrompt\.section/);
 });
 
+test("propose-write tool exposes the proposal id to agents", async () => {
+  const tools = await readFile(join(root, "src/host/tools.js"), "utf8");
+  assert.match(tools, /Proposal id: \$\{value\.id\}/);
+});
+
 test("tool catalog contains only additive write operations", async () => {
   const tools = await readFile(join(root, "src/host/tools.js"), "utf8");
   assert.match(tools, /name: "obsidian_search"/);

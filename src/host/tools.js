@@ -202,7 +202,10 @@ export function registerTools(ctx, service) {
       reason: { type: "string", description: "Why this note or append is useful." },
       citations: { type: "array", items: { type: "string" }, description: "Source note paths used for this content." }
     },
-    output: { schema: proposalSchema, render: (_args, value) => text(`Proposed ${value.operation}: ${value.path}\n\n${value.diff}`) },
+    output: {
+      schema: proposalSchema,
+      render: (_args, value) => text(`Proposed ${value.operation}: ${value.path}\n\nProposal id: ${value.id}\n\n${value.diff}`)
+    },
     async execute(args) {
       return service.proposeWrite(args);
     },
