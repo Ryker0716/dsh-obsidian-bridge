@@ -1,6 +1,6 @@
 - insert:
     - id: obsidian-vault-studio
-      name: dsh-obsidian-vault-studio
+      name: dsh-obsidian-bridge
       config:
         vaultPath: ""
         indexMode: keyword

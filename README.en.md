@@ -29,7 +29,7 @@ Connect a local Obsidian vault to DeepSeek Harness. After you grant access, the 
 DeepSeek Harness can install the plugin from either a GitHub repository or an npm package:
 
 - **GitHub repository**: `https://github.com/spark-ai-boy/dsh-obsidian-bridge`
-- **npm package**: `dsh-obsidian-vault-studio`
+- **npm package**: `dsh-obsidian-bridge`
 
 ### Steps
 

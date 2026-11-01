@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   publish:
-    name: Publish dsh-obsidian-vault-studio
+    name: Publish dsh-obsidian-bridge
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -52,11 +52,11 @@ jobs:
         id: registry
         run: |
           VERSION=$(node -p "require('./package.json').version")
-          if npm view "dsh-obsidian-vault-studio@$VERSION" version \
+          if npm view "dsh-obsidian-bridge@$VERSION" version \
             --registry=https://registry.npmjs.org/ \
             --prefer-online >/dev/null 2>&1; then
             echo "published=true" >> "$GITHUB_OUTPUT"
-            echo "dsh-obsidian-vault-studio@$VERSION is already published; skipping."
+            echo "dsh-obsidian-bridge@$VERSION is already published; skipping."
           else
             echo "published=false" >> "$GITHUB_OUTPUT"
           fi

@@ -27,7 +27,7 @@
 DeepSeek Harness 支持从 GitHub 仓库或 npm 包安装，二选一：
 
 - **GitHub 仓库**：`https://github.com/spark-ai-boy/dsh-obsidian-bridge`
-- **npm 包**：`dsh-obsidian-vault-studio`
+- **npm 包**：`dsh-obsidian-bridge`
 
 ### 步骤
 
