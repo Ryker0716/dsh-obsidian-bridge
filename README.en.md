@@ -4,7 +4,7 @@ Connect a local Obsidian vault to DeepSeek Harness. After you grant access, the 
 
 [中文](README.md)
 
-> Current version: `0.1.9`
+> Current version: `0.1.10`
 
 ![Obsidian Vault Studio dashboard](docs/images/dashboard.png)
 

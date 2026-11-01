@@ -4,7 +4,7 @@
 
 [English](README.en.md)
 
-> 当前版本：`0.1.9`
+> 当前版本：`0.1.10`
 
 ![Obsidian Vault Studio 概览](docs/images/dashboard.png)
 

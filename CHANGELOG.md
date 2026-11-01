@@ -2,6 +2,17 @@
 
 All notable changes are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses [Semantic Versioning](https://semver.org/).
 
+## [0.1.10] - 2026-11-01
+
+### Fixed
+
+- Saving settings no longer waits for a full embedding pass. A mode switch during embedding returns immediately and rebuilds in the background; progress is reported through `indexStatus`.
+- The Settings mode selector, dashboard mode labels, search-result provenance, kickers, usage short labels, and remaining Chinese prose now follow the active locale instead of showing English strings.
+
+### Tests
+
+- Added a regression test proving a settings save returns before background embedding completes.
+
 ## [0.1.9] - 2026-11-01
 
 ### Fixed

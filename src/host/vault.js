@@ -112,6 +112,7 @@ export class VaultIndex {
     this.initError = "";
     this.embeddingReady = false;
     this.embeddingTask = null;
+    this.rebuildTask = null;
     this.disposed = false;
     this.watcher = null;
     this.watchTimer = null;
@@ -893,18 +894,29 @@ export class VaultIndex {
       await this.startWatching();
     }
     if (needsRebuild) {
-      if (this.embeddingTask) await this.embeddingTask.catch(() => {});
-      this.vectors = [];
-      this.vectorMask = [];
+      // Saving settings must return immediately. Clearing the vector store and
+      // re-embedding can take minutes; the UI observes progress through
+      // indexStatus instead of holding the save request open.
+      const previousEmbedding = this.embeddingTask;
       this.embeddingReady = false;
       this.embeddingProgress = 0;
-      await this.startWatching();
-      try {
-        await this.rebuild({ embed: true });
-      } catch (error) {
-        this.initError = error instanceof Error ? error.message : String(error);
-        this.statsData = emptyStats(this.settings, { error: this.initError });
-      }
+      const task = (this.rebuildTask ?? Promise.resolve())
+        .then(async () => {
+          if (previousEmbedding) await previousEmbedding.catch(() => {});
+          if (this.disposed) return;
+          this.vectors = [];
+          this.vectorMask = [];
+          await this.startWatching();
+          await this.rebuild({ embed: true });
+        })
+        .catch((error) => {
+          this.initError = error instanceof Error ? error.message : String(error);
+          this.statsData = emptyStats(this.settings, { error: this.initError });
+        });
+      this.rebuildTask = task;
+      task.finally(() => {
+        if (this.rebuildTask === task) this.rebuildTask = null;
+      });
     }
     return { ...this.settings };
   }

@@ -49,6 +49,24 @@ test("indexes, searches, and reports stats", async () => {
   }
 });
 
+test("settings save returns before background embedding finishes", async () => {
+  const root = await fixture();
+  const index = new VaultIndex({
+    config: { vaultPath: root, dataDir: join(root, ".data"), indexMode: "keyword", watch: false }
+  });
+  try {
+    await index.initialize();
+    const started = Date.now();
+    const saved = await index.updateSettings({ indexMode: "hybrid" });
+    assert.equal(saved.indexMode, "hybrid");
+    assert.ok(Date.now() - started < 1000, "save should not wait for embedding");
+    if (index.rebuildTask) await index.rebuildTask;
+  } finally {
+    index.dispose();
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
 test("keyword search supports Latin prefixes for type-ahead", async () => {
   const root = await fixture();
   await writeFile(join(root, "技术", "Search.md"), "# Retrieval\n\nA retrieval pipeline with reranking.\n");
