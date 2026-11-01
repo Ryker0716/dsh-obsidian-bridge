@@ -24,11 +24,18 @@
 - DeepSeek Harness 0.2.x 桌面版，支持安装第三方插件
 - 一个本地 Obsidian Vault
 
+### 安装方式
+
+DeepSeek Harness 支持从 GitHub 仓库或 npm 包安装，二选一：
+
+- **GitHub 仓库**：`https://github.com/spark-ai-boy/dsh-obsidian-bridge`
+- **npm 包**：`dsh-obsidian-vault-studio`
+
 ### 步骤
 
 1. 在 DeepSeek Harness 左侧栏打开 **插件**。
 2. 点击 **添加插件** → **安装第三方插件**。
-3. 输入`https://github.com/spark-ai-boy/dsh-obsidian-bridge`，然后点击安装，安装完成之后点击启用。
+3. 在输入框中填写上面的 **GitHub 仓库地址** 或 **npm 包名**，然后点击安装；安装完成后点击启用。
 4. 在左侧栏打开 **Obsidian 知识库**。
 
 ![Obsidian Vault Studio 安装](docs/images/install.png)

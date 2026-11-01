@@ -36,6 +36,29 @@ You need Node.js 22+ for the test suite. DeepSeek Harness and React are supplied
 
 Please use conventional commit subjects such as `feat: add folder filters to search`, `fix: reject stale append proposals`, or `docs: clarify local embedding setup`.
 
+## Releases
+
+Publishing to npm is automated by `.github/workflows/publish-npm.yml` using npm Trusted Publishing (GitHub OIDC), so no `NPM_TOKEN` secret is required.
+
+One-time npm setup:
+
+1. Open the package settings on npmjs.com.
+2. Add a Trusted Publisher for GitHub Actions:
+   - Owner: `spark-ai-boy`
+   - Repository: `dsh-obsidian-bridge`
+   - Workflow filename: `publish-npm.yml`
+   - Environment: leave empty unless the workflow uses one.
+3. If staged publishing is enabled for the package, approve stages or disable it so releases publish directly.
+
+Update `CHANGELOG.md`, then cut a release from a clean `main`:
+
+```bash
+npm version patch
+git push --follow-tags
+```
+
+The `v*` tag triggers both the GitHub Release workflow and the npm publish workflow. The npm workflow runs the test suite, checks that the tag matches `package.json`, and skips publishing if that version already exists on npm.
+
 ## Reporting bugs
 
 Use the issue templates and include:

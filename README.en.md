@@ -26,11 +26,18 @@ Connect a local Obsidian vault to DeepSeek Harness. After you grant access, the 
 - DeepSeek Harness 0.2.x desktop, with third-party plugin installation enabled
 - A local Obsidian vault
 
+### Install source
+
+DeepSeek Harness can install the plugin from either a GitHub repository or an npm package:
+
+- **GitHub repository**: `https://github.com/spark-ai-boy/dsh-obsidian-bridge`
+- **npm package**: `dsh-obsidian-vault-studio`
+
 ### Steps
 
 1. Open **Plugins** in the DeepSeek Harness sidebar.
 2. Choose **Add plugin** → **Install third-party plugin**.
-3. Enter `https://github.com/spark-ai-boy/dsh-obsidian-bridge`, install it, then click **Enable**.
+3. Enter either the **GitHub repository URL** or the **npm package name** above, install it, then click **Enable**.
 4. Open **Obsidian Vault Studio** in the sidebar.
 
 ![Obsidian Vault Studio installation](docs/images/install.png)
