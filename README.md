@@ -2,13 +2,11 @@
 
 把本地 Obsidian 知识库接入 DeepSeek Harness。模型经你授权后可以检索笔记、读取片段、组装上下文，并以“先提案、后写入”的方式创建或追加笔记。索引、向量和统计都留在本机。
 
-[English](README.en.md) · [MIT License](LICENSE)
+[English](README.en.md)
 
 > 当前版本：`0.1.9`
 
 ![Obsidian Vault Studio 概览](docs/images/dashboard.png)
-
-*截图使用示例数据。*
 
 ## 能做什么
 
@@ -28,12 +26,12 @@
 
 ### 步骤
 
-1. 获取插件包 `dsh-obsidian-vault-studio-0.1.9.tgz`（Release 页面，或仓库的 `dist/` 目录）。
-2. 在 DeepSeek Harness 左侧栏打开 **插件**。
-3. 点击 **添加插件** → **安装第三方插件**。
-4. 选择上面的 `.tgz` 文件，安装后点击 **立即启用**。
-5. 完全退出 DeepSeek Harness，再重新打开。
-6. 在左侧栏打开 **Obsidian 知识库**。
+1. 在 DeepSeek Harness 左侧栏打开 **插件**。
+2. 点击 **添加插件** → **安装第三方插件**。
+3. 输入`https://github.com/spark-ai-boy/dsh-obsidian-bridge`，然后点击安装，安装完成之后点击启用。
+4. 在左侧栏打开 **Obsidian 知识库**。
+
+![Obsidian Vault Studio 安装](docs/images/install.png)
 
 ## 首次配置
 

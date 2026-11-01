@@ -2,7 +2,7 @@
 
 Connect a local Obsidian vault to DeepSeek Harness. After you grant access, the model can search your notes, read relevant passages, build grounded context, and create or append notes through a proposal-first workflow. The index, embeddings, and statistics stay on your machine.
 
-[中文](README.md) · [MIT License](LICENSE)
+[中文](README.md)
 
 > Current version: `0.1.9`
 
@@ -28,12 +28,12 @@ Connect a local Obsidian vault to DeepSeek Harness. After you grant access, the 
 
 ### Steps
 
-1. Get `dsh-obsidian-vault-studio-0.1.9.tgz` from a release, or from `dist/` in this repository.
-2. Open **Plugins** in the DeepSeek Harness sidebar.
-3. Choose **Add plugin** → **Install third-party plugin**.
-4. Select the `.tgz` file, install it, then click **Enable now**.
-5. Quit DeepSeek Harness completely and reopen it.
-6. Open **Obsidian Vault Studio** in the sidebar.
+1. Open **Plugins** in the DeepSeek Harness sidebar.
+2. Choose **Add plugin** → **Install third-party plugin**.
+3. Enter `https://github.com/spark-ai-boy/dsh-obsidian-bridge`, install it, then click **Enable**.
+4. Open **Obsidian Vault Studio** in the sidebar.
+
+![Obsidian Vault Studio installation](docs/images/install.png)
 
 ## First run
 
