@@ -871,8 +871,16 @@ window.__ModuleLoader__.load({
         h("circle", { cx: 4, cy: 7.5, r: 1.3, fill: "currentColor" }));
     }
 
+    let activeLocale = "";
+
     function lang() {
-      return (typeof navigator !== "undefined" && String(navigator.language || "").toLowerCase().startsWith("zh")) ? "zh" : "en";
+      // DSH owns the UI language. `navigator.language` can be English even when
+      // the Harness itself is set to Chinese, so prefer the locale service's
+      // active language and the document language it synchronizes.
+      const documentLanguage = typeof document !== "undefined" ? String(document.documentElement?.lang || "") : "";
+      const browserLanguage = typeof navigator !== "undefined" ? String(navigator.language || "") : "";
+      const candidate = String(activeLocale || documentLanguage || browserLanguage);
+      return candidate.toLowerCase().startsWith("zh") ? "zh" : "en";
     }
 
     function makeT(props) {
@@ -1923,6 +1931,18 @@ window.__ModuleLoader__.load({
     const dictionaries = { en: DICT.en, zh: DICT.zh };
 
     function apply(ctx) {
+      const readActiveLocale = () => {
+        try {
+          const snapshot = ctx.locale?.getSnapshot?.() ?? ctx.locale?.getLocale?.();
+          if (snapshot?.active) activeLocale = String(snapshot.active);
+        } catch {}
+      };
+      readActiveLocale();
+      ctx.effect(() => {
+        const unsubscribe = ctx.locale?.subscribe?.(readActiveLocale);
+        return () => { if (typeof unsubscribe === "function") unsubscribe(); };
+      }, "obsidian-vault-studio: active locale");
+
       const mounted = ctx.remote.$mount(remoteContribution);
       mounted.catch(() => {});
       ctx.effect(() => {

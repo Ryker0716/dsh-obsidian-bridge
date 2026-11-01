@@ -2,6 +2,12 @@
 
 All notable changes are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses [Semantic Versioning](https://semver.org/).
 
+## [0.1.9] - 2026-11-01
+
+### Fixed
+
+- The UI now follows DeepSeek Harness' active locale (`ctx.locale` / `<html lang>`) instead of `navigator.language`, so a Chinese Harness with an English browser opens in Chinese.
+
 ## [0.1.8] - 2026-11-01
 
 ### Added

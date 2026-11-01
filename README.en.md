@@ -4,7 +4,7 @@ Connect a local Obsidian vault to DeepSeek Harness. After you grant access, the 
 
 [中文](README.md) · [MIT License](LICENSE)
 
-> Current version: `0.1.8`
+> Current version: `0.1.9`
 
 ![Obsidian Vault Studio dashboard](docs/images/dashboard.png)
 
@@ -28,7 +28,7 @@ Connect a local Obsidian vault to DeepSeek Harness. After you grant access, the 
 
 ### Steps
 
-1. Get `dsh-obsidian-vault-studio-0.1.8.tgz` from a release, or from `dist/` in this repository.
+1. Get `dsh-obsidian-vault-studio-0.1.9.tgz` from a release, or from `dist/` in this repository.
 2. Open **Plugins** in the DeepSeek Harness sidebar.
 3. Choose **Add plugin** → **Install third-party plugin**.
 4. Select the `.tgz` file, install it, then click **Enable now**.

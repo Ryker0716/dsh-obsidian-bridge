@@ -1,17 +1,17 @@
 {
   "name": "dsh-obsidian-vault-studio",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "Obsidian Vault Studio for DeepSeek Harness: local vault index, hybrid semantic search, and safe note writing.",
   "type": "module",
   "license": "MIT",
   "author": "spark-ai-boy",
   "repository": {
     "type": "git",
-    "url": "https://github.com/spark-ai-boy/dsh-obsidian-vault-studio.git"
+    "url": "https://github.com/spark-ai-boy/dsh-obsidian-bridge.git"
   },
-  "homepage": "https://github.com/spark-ai-boy/dsh-obsidian-vault-studio#readme",
+  "homepage": "https://github.com/spark-ai-boy/dsh-obsidian-bridge#readme",
   "bugs": {
-    "url": "https://github.com/spark-ai-boy/dsh-obsidian-vault-studio/issues"
+    "url": "https://github.com/spark-ai-boy/dsh-obsidian-bridge/issues"
   },
   "keywords": [
     "deepseek",
@@ -60,6 +60,11 @@
   },
   "scripts": {
     "test": "node --test \"tests/*.test.js\"",
-    "check": "node --check index.js && node --check client.js && node --test \"tests/*.test.js\""
+    "check": "node --check index.js && node --check client.js && node --test \"tests/*.test.js\"",
+    "prepublishOnly": "npm run check"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
   }
 }

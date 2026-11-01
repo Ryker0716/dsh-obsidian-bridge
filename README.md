@@ -4,7 +4,7 @@
 
 [English](README.en.md) · [MIT License](LICENSE)
 
-> 当前版本：`0.1.8`
+> 当前版本：`0.1.9`
 
 ![Obsidian Vault Studio 概览](docs/images/dashboard.png)
 
@@ -28,7 +28,7 @@
 
 ### 步骤
 
-1. 获取插件包 `dsh-obsidian-vault-studio-0.1.8.tgz`（Release 页面，或仓库的 `dist/` 目录）。
+1. 获取插件包 `dsh-obsidian-vault-studio-0.1.9.tgz`（Release 页面，或仓库的 `dist/` 目录）。
 2. 在 DeepSeek Harness 左侧栏打开 **插件**。
 3. 点击 **添加插件** → **安装第三方插件**。
 4. 选择上面的 `.tgz` 文件，安装后点击 **立即启用**。
