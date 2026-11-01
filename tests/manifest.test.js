@@ -27,6 +27,12 @@ test("cordis patch inserts the package by its manifest name", async () => {
   assert.ok(patch.includes(`name: ${pkg.name}`));
 });
 
+test("Client module id matches the package name", async () => {
+  const pkg = JSON.parse(await readFile(join(root, "package.json"), "utf8"));
+  const client = await readFile(join(root, "client.js"), "utf8");
+  assert.ok(client.includes(`id: "${pkg.name}"`));
+});
+
 test("Client registers the main page and matching sidebar panel", async () => {
   const client = await readFile(join(root, "client.js"), "utf8");
   assert.match(client, /^window\.__ModuleLoader__\.load\(/);

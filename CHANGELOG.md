@@ -2,6 +2,16 @@
 
 All notable changes are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses [Semantic Versioning](https://semver.org/).
 
+## [0.1.15] - 2026-11-01
+
+### Fixed
+
+- Updated the client module registration id to match the new npm package name. This prevents a stale factory from the previous package name from colliding with the new bundle during upgrade.
+
+### Tests
+
+- Added a regression check that the client module id matches `package.json`'s package name.
+
 ## [0.1.11] - 2026-11-01
 
 ### Fixed

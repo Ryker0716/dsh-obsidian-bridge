@@ -1,5 +1,5 @@
 window.__ModuleLoader__.load({
-  id: "dsh-obsidian-vault-studio",
+  id: "dsh-obsidian-bridge",
   factory(require) {
     const React = require("react");
     const h = React.createElement;
@@ -430,14 +430,14 @@ window.__ModuleLoader__.load({
      */
     const strictCodec = (subject) => ({
       mode: "strict",
-      typeSymbol: `dsh-obsidian-vault-studio#${subject}`,
+      typeSymbol: `dsh-obsidian-bridge#${subject}`,
       create: () => ({ parse: (value) => value })
     });
 
     const remoteContribution = {
-      package: "dsh-obsidian-vault-studio",
+      package: "dsh-obsidian-bridge",
       descriptors: METHODS.map(([method, parameters]) => ({
-        id: `dsh-obsidian-vault-studio#${NAMESPACE}/${method}`,
+        id: `dsh-obsidian-bridge#${NAMESPACE}/${method}`,
         namespace: NAMESPACE,
         method,
         service: NAMESPACE,
