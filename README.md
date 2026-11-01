@@ -4,8 +4,6 @@
 
 [English](README.en.md)
 
-> 当前版本：`0.1.11`
-
 ![Obsidian Vault Studio 概览](docs/images/dashboard.png)
 
 ## 能做什么
