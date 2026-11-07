@@ -2,6 +2,16 @@
 
 All notable changes are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses [Semantic Versioning](https://semver.org/).
 
+## [0.1.18] - 2026-11-07
+
+### Added
+
+- A GitHub banner on the dashboard that links to https://github.com/spark-ai-boy/dsh-obsidian-bridge, with localized English and Chinese copy and a responsive layout.
+
+### Tests
+
+- Added a regression check that the dashboard links to the GitHub project.
+
 ## [0.1.15] - 2026-11-01
 
 ### Fixed

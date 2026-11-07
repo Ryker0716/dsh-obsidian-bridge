@@ -1,6 +1,6 @@
 {
   "name": "dsh-obsidian-bridge",
-  "version": "0.1.17",
+  "version": "0.1.18",
   "description": "Obsidian Vault Studio for DeepSeek Harness: local vault index, hybrid semantic search, and safe note writing.",
   "type": "module",
   "license": "MIT",
