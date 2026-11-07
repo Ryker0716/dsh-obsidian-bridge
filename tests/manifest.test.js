@@ -45,6 +45,14 @@ test("Client registers the main page and matching sidebar panel", async () => {
   assert.doesNotMatch(client, /^\s*import\s/m);
 });
 
+test("dashboard links to the GitHub project", async () => {
+  const client = await readFile(join(root, "client.js"), "utf8");
+  assert.match(client, /const REPO_URL = "https:\/\/github\.com\/spark-ai-boy\/dsh-obsidian-bridge";/);
+  assert.match(client, /className: "vs-github"/);
+  assert.match(client, /t\("github\.cta"\)/);
+  assert.match(client, /"github\.title":/);
+});
+
 test("Host entry declares tools, a remote service, and approval policy", async () => {
   const host = await readFile(join(root, "index.js"), "utf8");
   assert.match(host, /export const Config/);

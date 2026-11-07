@@ -8,6 +8,7 @@ window.__ModuleLoader__.load({
     const NS = "obsidian-vault-studio";
     const PANEL_ID = "obsidian-vault-studio";
     const NAMESPACE = "obsidianVault";
+    const REPO_URL = "https://github.com/spark-ai-boy/dsh-obsidian-bridge";
 
     const DICT = {
       en: {
@@ -205,7 +206,13 @@ window.__ModuleLoader__.load({
         "index.chunks": "Chunks",
         "index.vectors": "Vectors",
         "index.idle": "idle",
-        "index.ready": "ready"
+        "index.ready": "ready",
+        "github.kicker": "OPEN SOURCE · BUILT IN PUBLIC",
+        "github.title": "Follow Obsidian Vault Studio on GitHub",
+        "github.body": "New features and fixes land in the repository first. Star the project to keep up, and open an issue to shape what comes next.",
+        "github.cta": "Star on GitHub",
+        "github.aria": "Open the dsh-obsidian-bridge repository on GitHub",
+        "github.repo": "spark-ai-boy / dsh-obsidian-bridge"
       },
       zh: {
         "panel": "Obsidian 知识库",
@@ -402,7 +409,13 @@ window.__ModuleLoader__.load({
         "index.chunks": "片段",
         "index.vectors": "向量",
         "index.idle": "空闲",
-        "index.ready": "就绪"
+        "index.ready": "就绪",
+        "github.kicker": "开源项目 · 与社区共建",
+        "github.title": "在 GitHub 上关注 Obsidian Vault Studio",
+        "github.body": "新功能与修复会先在仓库发布。给项目点个 Star 关注更新，也欢迎提 Issue 告诉我们你希望它变成什么样。",
+        "github.cta": "去 GitHub 加 Star",
+        "github.aria": "在 GitHub 上打开 dsh-obsidian-bridge 仓库",
+        "github.repo": "spark-ai-boy / dsh-obsidian-bridge"
       }
     };
 
@@ -852,6 +865,18 @@ window.__ModuleLoader__.load({
 .vs-stat-grid .vs-stat-label { font: var(--dsw-font-xxxs-11); }
 .vs-stat-grid .vs-stat-foot { font: var(--dsw-font-xxxs-11); margin-top: 4px; }
 .vs-dash-grid { gap: 10px; }
+.vs-github { display: flex; align-items: center; gap: 13px; padding: 12px 14px; border: 1px solid color-mix(in srgb, var(--vs-violet) 26%, var(--vs-line)); border-radius: 10px; background: linear-gradient(100deg, color-mix(in srgb, var(--vs-violet) 8%, var(--vs-card)), var(--vs-card) 62%); text-decoration: none; color: inherit; transition: .16s; }
+.vs-github:hover { border-color: color-mix(in srgb, var(--vs-violet) 52%, var(--vs-line)); background: linear-gradient(100deg, color-mix(in srgb, var(--vs-violet) 12%, var(--vs-card)), var(--vs-card) 62%); }
+.vs-github-mark { width: 40px; height: 40px; flex: none; border-radius: 10px; display: grid; place-items: center; background: var(--vs-fg); color: var(--vs-bg); box-shadow: 0 10px 24px -16px color-mix(in srgb, var(--vs-fg) 70%, transparent); }
+.vs-github-copy { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.vs-github-copy b { font: 600 14px/19px var(--dsw-font-family); }
+.vs-github-copy > span { color: var(--vs-muted); font: var(--dsw-font-xxs-12); line-height: 1.5; }
+.vs-github-side { flex: none; display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
+.vs-github-repo { color: var(--vs-soft); font: var(--dsw-font-xxxs-11); letter-spacing: .01em; }
+.vs-github-cta { height: 30px; display: inline-flex; align-items: center; gap: 6px; padding: 0 11px; border-radius: 7px; background: var(--vs-fg); color: var(--vs-bg); font: var(--dsw-font-xxs-12); white-space: nowrap; }
+.vs-github-cta svg:first-child { color: #f5c451; }
+.vs-github:hover .vs-github-cta { opacity: .9; }
+@media (max-width: 760px) { .vs-github { align-items: flex-start; flex-wrap: wrap; } .vs-github-copy { flex-basis: calc(100% - 53px); } .vs-github-side { width: 100%; flex-direction: row; align-items: center; justify-content: space-between; padding-left: 53px; } }
 @media (max-width: 1180px) { .vs-dash-grid > .vs-span-7, .vs-dash-grid > .vs-span-5 { grid-column: span 12; } .vs-orbit { width: 230px; height: 178px; } }
 @media (max-width: 1180px) { .vs-dash-grid > .vs-span-7, .vs-dash-grid > .vs-span-5 { grid-column: span 12; } .vs-orbit { width: 260px; height: 210px; } }
 @media (max-width: 900px) { .vs-hero { align-items: flex-start; flex-direction: column; } .vs-orbit { display: none; } .vs-dashboard .vs-hero h2 { font-size: 27px; line-height: 34px; } .vs-head-actions { gap: 6px; } .vs-topline { align-items: flex-start; flex-direction: column; } .vs-topline-path { max-width: 100%; } }
@@ -873,6 +898,8 @@ window.__ModuleLoader__.load({
         arrow: [h("path", { key: "a", d: "M5 12h13M13 6l6 6-6 6" })],
         file: [h("path", { key: "a", d: "M6 3.5h8.5L19 8v12.5H6A1.5 1.5 0 0 1 4.5 19V5A1.5 1.5 0 0 1 6 3.5Z" }), h("path", { key: "b", d: "M14 3.8V8h4.2" })],
         spark: [h("path", { key: "a", d: "M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9L12 3Z" }), h("path", { key: "b", d: "M19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8L19 16Z" })],
+        star: [h("path", { key: "a", d: "M12 3.6l2.6 5.3 5.9.9-4.3 4.2 1 5.9-5.2-2.8-5.2 2.8 1-5.9L3.5 9.8l5.9-.9L12 3.6Z" })],
+        github: [h("path", { key: "a", fill: "currentColor", stroke: "none", d: "M12 2C6.48 2 2 6.58 2 12.26c0 4.53 2.87 8.37 6.84 9.73.5.1.68-.22.68-.49 0-.24-.01-.88-.01-1.73-2.78.62-3.37-1.37-3.37-1.37-.45-1.18-1.11-1.5-1.11-1.5-.91-.63.07-.62.07-.62 1 .07 1.53 1.06 1.53 1.06.89 1.57 2.34 1.12 2.91.86.09-.66.35-1.12.63-1.38-2.22-.26-4.56-1.14-4.56-5.06 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.28 2.75 1.05a9.36 9.36 0 0 1 2.5-.34c.85 0 1.71.12 2.5.34 1.91-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.93-2.34 4.8-4.57 5.05.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.81 0 .27.18.6.69.49A10.02 10.02 0 0 0 22 12.26C22 6.58 17.52 2 12 2Z" })],
         link: [h("path", { key: "a", d: "M10 13.8a3.5 3.5 0 0 0 5 0l3-3a3.5 3.5 0 0 0-5-5l-1.3 1.3M14 10.2a3.5 3.5 0 0 0-5 0l-3 3a3.5 3.5 0 0 0 5 5l1.3-1.3" })],
         alert: [h("path", { key: "a", d: "M12 3 2.8 19h18.4L12 3Z" }), h("path", { key: "b", d: "M12 9v4M12 16.5v.1" })],
         check: [h("path", { key: "a", d: "m5 12.5 4.2 4.2L19 6.8" })],
@@ -1296,6 +1323,24 @@ window.__ModuleLoader__.load({
           h(StatCard, { label: t("stats.tags"), value: stats.totalTags, icon: "link", foot: `${(stats.tags || []).slice(0, 2).map((tag) => tag.name).join(" · ") || "—"}` }),
           h(StatCard, { label: t("stats.week"), value: stats.composition?.updatedLast7 ?? 0, icon: "refresh", foot: t("stats.weekFoot") }),
           h(StatCard, { label: t("stats.chunks"), value: stats.totalChunks, icon: "grid", foot: t(`search.${stats.indexMode || "keyword"}`) })),
+        h("a", {
+          className: "vs-github",
+          href: REPO_URL,
+          target: "_blank",
+          rel: "noreferrer noopener",
+          "aria-label": t("github.aria")
+        },
+          h("span", { className: "vs-github-mark" }, h(Icon, { name: "github", size: 21 })),
+          h("div", { className: "vs-github-copy" },
+            h("div", { className: "vs-kicker" }, t("github.kicker")),
+            h("b", null, t("github.title")),
+            h("span", null, t("github.body"))),
+          h("span", { className: "vs-github-side" },
+            h("span", { className: "vs-github-repo" }, t("github.repo")),
+            h("span", { className: "vs-github-cta" },
+              h(Icon, { name: "star", size: 13 }),
+              t("github.cta"),
+              h(Icon, { name: "arrow", size: 12 })))),
         (stats.heatmap || []).length
           ? (() => {
             const summary = summarizeHeatmap(stats.heatmap || []);
