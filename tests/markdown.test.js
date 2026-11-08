@@ -26,6 +26,8 @@ test("chunks by heading and keeps line numbers", () => {
   assert.ok(note.chunks.length >= 2);
   assert.ok(note.chunks.some((chunk) => chunk.headingPath.includes("Section")));
   assert.ok(note.chunks.every((chunk) => chunk.notePath === "技术/Test.md"));
+  assert.equal(note.headings[0].line, 4);
+  assert.equal(note.chunks[0].startLine, 6);
 });
 
 test("tokenizes Chinese and Latin text", () => {

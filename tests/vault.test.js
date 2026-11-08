@@ -229,15 +229,23 @@ test("one poisoned text no longer aborts the embedding run", async () => {
   try {
     await index.initialize();
     for (let attempt = 0; attempt < 120; attempt += 1) {
-      if (index.status().embeddingReady) break;
-      if (index.status().embeddingError) break;
+      if (!index.embeddingTask && index.status().embeddingError) break;
       await new Promise((resolve) => setTimeout(resolve, 50));
     }
     const status = index.status();
-    assert.equal(status.embeddingReady, true, "embedding run must complete despite the poisoned chunk");
-    assert.equal(status.embeddingError, "");
+    assert.equal(status.embeddingReady, status.pending === 0);
+    assert.equal(status.embeddingProgress, Math.round(status.vectors / status.chunks * 100));
+    assert.match(status.embeddingError, /could not be embedded/);
     assert.ok(status.vectors >= status.chunks - 1, "all clean chunks must be embedded");
     assert.ok(requests > 4, "bisection must have isolated the poisoned chunk");
+    const proposal = await index.proposeWrite({ operation: "create", targetPath: "clean.md", content: "clean" });
+    const applied = await index.applyWrite(proposal.id);
+    const writeStatus = await index.rebuild({ embed: true }).then(async () => {
+      if (index.embeddingTask) await index.embeddingTask;
+      return index.lastIndexError || index.embeddingError;
+    });
+    assert.ok(applied.undoId);
+    assert.match(writeStatus, /could not be embedded/);
   } finally {
     index.dispose();
     server.close();

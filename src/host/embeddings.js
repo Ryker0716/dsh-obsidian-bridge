@@ -9,9 +9,12 @@
 
 function normalize(vector) {
   let norm = 0;
-  for (const value of vector) norm += value * value;
+  for (const value of vector) {
+    if (typeof value !== "number" || !Number.isFinite(value)) throw new Error("Embedding service returned a non-numeric or non-finite vector.");
+    norm += value * value;
+  }
   norm = Math.sqrt(norm);
-  if (!Number.isFinite(norm) || norm === 0) return vector;
+  if (!Number.isFinite(norm) || norm < 1e-12) throw new Error("Embedding service returned a zero or invalid vector.");
   return vector.map((value) => value / norm);
 }
 
@@ -32,8 +35,15 @@ function abortSignal(ms) {
   return controller.signal;
 }
 
+function throwIfAborted(signal) {
+  if (signal?.aborted) {
+    throw new Error(signal.reason?.message || "Embedding request was cancelled.");
+  }
+}
+
 export async function embedTexts(settings, texts, signal) {
   if (!texts.length) return [];
+  throwIfAborted(signal);
   if (!settings.embeddingUrl || !validUrl(settings.embeddingUrl)) {
     throw new Error("Embedding service URL must be an http(s) endpoint.");
   }
@@ -86,7 +96,10 @@ export async function embedTexts(settings, texts, signal) {
 
   let vectors;
   if (Array.isArray(payload?.data)) {
-    vectors = payload.data.map((item) => item?.embedding);
+    const items = payload.data.every((item) => Number.isInteger(item?.index) && item.index >= 0 && item.index < texts.length)
+      ? [...payload.data].sort((a, b) => a.index - b.index)
+      : payload.data;
+    vectors = items.map((item) => item?.embedding);
   } else if (Array.isArray(payload?.embeddings)) {
     vectors = payload.embeddings;
   } else if (Array.isArray(payload?.embedding)) {
