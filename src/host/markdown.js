@@ -181,7 +181,42 @@ function splitLongSection(section, maxChars) {
   if (current.trim()) {
     chunks.push({ ...section, text: current, startLine, endLine: lineCursor });
   }
-  return chunks.length ? chunks : [section];
+  // A single paragraph without blank lines (a huge Markdown table, a long
+  // code fence, minified content) survives the paragraph loop whole and can
+  // reach 17x maxChars — one such chunk hit 36,769 chars against a 2,200
+  // limit. Hard-split those by line, then by raw character boundary.
+  const capped = [];
+  for (const chunk of chunks.length ? chunks : [section]) {
+    if (chunk.text.length <= maxChars) {
+      capped.push(chunk);
+      continue;
+    }
+    const lines = chunk.text.split("\n");
+    let text = "";
+    let linesStart = chunk.startLine;
+    let lineNo = chunk.startLine;
+    const flushText = () => {
+      const trimmed = text.trim();
+      if (trimmed) {
+        capped.push({ ...chunk, text: trimmed, startLine: linesStart, endLine: lineNo });
+      }
+      text = "";
+      linesStart = lineNo;
+    };
+    for (const line of lines) {
+      if (text && text.length + line.length + 1 > maxChars) flushText();
+      text = text ? `${text}\n${line}` : line;
+      lineNo += 1;
+      while (text.length > maxChars) {
+        // One line alone exceeds the cap (e.g. a giant table row): slice it.
+        const head = text.slice(0, maxChars);
+        capped.push({ ...chunk, text: head, startLine: linesStart, endLine: lineNo });
+        text = text.slice(maxChars);
+      }
+    }
+    flushText();
+  }
+  return capped.length ? capped : [section];
 }
 
 export function parseNote({ path, raw, mtime, size, maxChunkChars = 2200 }) {
@@ -249,6 +284,11 @@ export function parseNote({ path, raw, mtime, size, maxChunkChars = 2200 }) {
       const searchText = [title, path, ...headingPath, ...tags, part.text].join("\n");
       const chunkHash = sha1(searchText);
       chunks.push({
+        // Content-addressed id: stable across position shifts so a mid-note
+        // edit keeps the vector cache valid for every unchanged chunk. The
+        // leading ordinal only disambiguates two identical sections within
+        // the same note and never keys the vector cache (rebuild() matches
+        // on `hash`).
         id: `${path}#${chunks.length}-${chunkHash.slice(0, 8)}`,
         notePath: path,
         title,

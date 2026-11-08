@@ -1,5 +1,5 @@
 import { watch } from "node:fs";
-import { mkdir, readFile, readdir, realpath, stat, writeFile } from "node:fs/promises";
+import { mkdir, readFile, readdir, realpath, rename, stat, writeFile } from "node:fs/promises";
 import { dirname, isAbsolute, join, relative, resolve } from "node:path";
 import { embedTexts, testEmbedding } from "./embeddings.js";
 import {
@@ -298,7 +298,10 @@ export class VaultIndex {
         const oldVectors = new Map();
         if (this.settings.indexMode !== "keyword" && this.vectors.length === this.chunks.length) {
           this.chunks.forEach((chunk, index) => {
-            if (this.hasVector(index)) oldVectors.set(chunk.id, this.vectors[index]);
+            // Key the cache by content hash, not chunk id: the id embeds the
+            // chunk's positional index, so inserting a line mid-note shifted
+            // every later id and invalidated vectors of unchanged chunks.
+            if (this.hasVector(index)) oldVectors.set(chunk.hash, this.vectors[index]);
           });
         }
 
@@ -329,8 +332,8 @@ export class VaultIndex {
         this.notes = notes;
         this.chunks = chunks;
         this.files = files;
-        this.vectors = chunks.map((chunk) => oldVectors.get(chunk.id));
-        this.vectorMask = chunks.map((chunk) => oldVectors.has(chunk.id));
+        this.vectors = chunks.map((chunk) => oldVectors.get(chunk.hash));
+        this.vectorMask = chunks.map((chunk) => oldVectors.has(chunk.hash));
         this.buildPostings();
         this.settings.lastIndexedAt = new Date().toISOString();
         await this.settingsStore.update({ lastIndexedAt: this.settings.lastIndexedAt });
@@ -380,6 +383,39 @@ export class VaultIndex {
     this.vocabulary = [...this.postings.keys()];
   }
 
+  /**
+   * Embed one batch with a retry, then bisect on persistent failure so a
+   * single rejected text (gateway content filters drop the connection for
+   * patterns like `$ curl ...` or `prompt (...)` inside technical notes)
+   * cannot abort the whole embedding run. Rejected texts resolve to `null`
+   * and stay unvectorized; everything else is embedded normally.
+   */
+  async embedBatchWithIsolation(batch) {
+    const texts = () => batch.map((item) => item.chunk.searchText || item.chunk.text);
+    let lastError = null;
+    for (let attempt = 1; attempt <= 3; attempt += 1) {
+      try {
+        return await embedTexts(this.settings, texts());
+      } catch (error) {
+        lastError = error;
+        await new Promise((resolve) => setTimeout(resolve, 250 * attempt));
+      }
+    }
+    if (batch.length === 1) {
+      this.logger?.warn?.(
+        `[vault-studio] embedding service keeps rejecting chunk ${batch[0].chunk.id} (${batch[0].chunk.notePath}); skipping it`
+      );
+      return [null];
+    }
+    const mid = Math.ceil(batch.length / 2);
+    const halves = [batch.slice(0, mid), batch.slice(mid)];
+    const vectors = [];
+    for (const half of halves) {
+      vectors.push(...(await this.embedBatchWithIsolation(half)));
+    }
+    return vectors;
+  }
+
   async embedPending() {
     if (this.disposed) return [];
     if (this.embeddingTask) return this.embeddingTask;
@@ -404,14 +440,18 @@ export class VaultIndex {
         }
         this.embeddingReady = false;
         this.embeddingError = "";
-        for (let index = 0; index < pending.length; index += 24) {
-          const batch = pending.slice(index, index + 24);
-          const vectors = await embedTexts(
-            this.settings,
-            batch.map((item) => item.chunk.searchText || item.chunk.text)
-          );
+        const batchSize = Math.max(1, Math.min(128, Number(this.settings.embeddingBatchSize) || 24));
+        for (let index = 0; index < pending.length; index += batchSize) {
+          const batch = pending.slice(index, index + batchSize);
+          const vectors = await this.embedBatchWithIsolation(batch);
           for (let offset = 0; offset < batch.length; offset += 1) {
             const vector = vectors[offset];
+            if (vector === null) {
+              // The embedding service permanently rejected this text (e.g. a
+              // gateway-side content filter). Leave it unvectorized instead of
+              // aborting the whole embedding run.
+              continue;
+            }
             if (!Array.isArray(vector) || !vector.length) throw new Error("Embedding service returned an empty vector.");
             if (
               this.settings.embeddingDimensions > 0 &&
@@ -426,7 +466,7 @@ export class VaultIndex {
           }
           this.embeddingProgress = Math.round(((index + batch.length) / pending.length) * 100);
           if (this.disposed) return;
-          if (index === 0 || index % (24 * 8) === 0 || index + batch.length >= pending.length) {
+          if (index === 0 || (index / batchSize) % 8 === 0 || index + batch.length >= pending.length) {
             await this.saveIndex();
           }
         }
@@ -590,6 +630,14 @@ export class VaultIndex {
   }
 
   status() {
+    let firstPendingChunk = null;
+    if (this.settings.indexMode !== "keyword") {
+      const index = this.chunks.findIndex((_chunk, position) => !this.hasVector(position));
+      if (index >= 0) {
+        const chunk = this.chunks[index];
+        firstPendingChunk = { id: chunk.id, notePath: chunk.notePath };
+      }
+    }
     return {
       building: this.building,
       buildProgress: this.buildProgress,
@@ -597,7 +645,9 @@ export class VaultIndex {
       embeddingProgress: this.embeddingProgress,
       embeddingError: this.embeddingError,
       chunks: this.chunks.length,
-      vectors: this.embeddedCount()
+      vectors: this.embeddedCount(),
+      pending: Math.max(0, this.chunks.length - this.embeddedCount()),
+      firstPendingChunk
     };
   }
 
@@ -989,7 +1039,18 @@ export class VaultIndex {
       vectorCount: embedded,
       dimensions
     };
-    await writeFile(join(this.dataDir, "index.json"), JSON.stringify(index), { mode: 0o600 });
+    // Write both files to a temp path first and rename over the target, so a
+    // crash mid-save cannot leave a truncated index.json (which loadIndex()
+    // treats as invalid and discards, triggering a full re-embed). index.json
+    // is committed last: it is the marker that the matching vectors.bin is
+    // complete.
+    await this.writeAtomic(join(this.dataDir, "vectors.bin"), () =>
+      this.serializeVectors(dimensions)
+    );
+    await this.writeAtomic(join(this.dataDir, "index.json"), () => JSON.stringify(index));
+  }
+
+  async serializeVectors(dimensions) {
     if (dimensions > 0 && this.chunks.length > 0) {
       const buffer = Buffer.alloc(this.chunks.length * dimensions * 4);
       let offset = 0;
@@ -1003,10 +1064,16 @@ export class VaultIndex {
           offset += dimensions * 4;
         }
       }
-      await writeFile(join(this.dataDir, "vectors.bin"), buffer, { mode: 0o600 });
-    } else {
-      await writeFile(join(this.dataDir, "vectors.bin"), Buffer.alloc(0), { mode: 0o600 });
+      return buffer;
     }
+    return Buffer.alloc(0);
+  }
+
+  async writeAtomic(targetPath, produce) {
+    const tmpPath = `${targetPath}.tmp`;
+    const payload = await produce();
+    await writeFile(tmpPath, payload, { mode: 0o600 });
+    await rename(tmpPath, targetPath);
   }
 
   async loadIndex() {
@@ -1042,16 +1109,23 @@ export class VaultIndex {
       if (dimensions > 0 && Number(index.vectorCount) > 0) {
         try {
           const buffer = await readFile(join(this.dataDir, "vectors.bin"));
-          for (let indexOffset = 0; indexOffset < this.chunks.length; indexOffset += 1) {
-            if (!mask[indexOffset]) continue;
-            const start = indexOffset * dimensions * 4;
-            if (start + dimensions * 4 > buffer.length) break;
-            const vector = new Float32Array(dimensions);
-            for (let dimension = 0; dimension < dimensions; dimension += 1) {
-              vector[dimension] = buffer.readFloatLE(start + dimension * 4);
+          const expected = this.chunks.length * dimensions * 4;
+          if (buffer.length >= expected) {
+            // View the buffer directly: one Float32Array over the whole file
+            // (4-byte aligned by construction) instead of chunks.length ×
+            // dimensions readFloatLE calls — for 32k chunks at 4096 dims that
+            // is 131M function calls per session startup.
+            for (let indexOffset = 0; indexOffset < this.chunks.length; indexOffset += 1) {
+              if (!mask[indexOffset]) continue;
+              const start = indexOffset * dimensions * 4;
+              if (start + dimensions * 4 > buffer.length) break;
+              this.vectors[indexOffset] = new Float32Array(
+                buffer.buffer,
+                buffer.byteOffset + start,
+                dimensions
+              );
+              this.vectorMask[indexOffset] = true;
             }
-            this.vectors[indexOffset] = vector;
-            this.vectorMask[indexOffset] = true;
           }
         } catch {
           this.vectors = this.chunks.map(() => undefined);
