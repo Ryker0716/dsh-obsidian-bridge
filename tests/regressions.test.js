@@ -152,7 +152,8 @@ test("stale remote mount failures cannot overwrite a successful retry", async ()
   let injectedApi;
   const ctx = {
     remote: { $mount: () => new Promise((resolve, reject) => mounts.push({ resolve, reject })) },
-    slots: { inject(slot, callback) { return callback({ register(options) { if (options.name === "main") sandbox.__testApi = options.inject().api; return options; } }); }, register() {} },
+    slots: { inject(slot, callback) { return callback(ctx.slots); }, register(options) { if (options.name === "main") sandbox.__panelApi = options.inject().api; return options; } },
+    get(name) { return name === "remote.obsidianVault" ? { stats: () => ({ configured: true }) } : undefined; },
     locale: { lang: () => "en", onChange() {}, register() {} },
     effect() {}
   };
@@ -168,18 +169,23 @@ test("stale remote mount failures cannot overwrite a successful retry", async ()
   sandbox.__clientPlugin.apply(ctx);
   await new Promise((resolve) => setImmediate(resolve));
   assert.equal(mounts.length, 1);
-  injectedApi = sandbox.__testApi;
-  await assert.rejects(
+  injectedApi = sandbox.__panelApi;
+  assert.equal(typeof injectedApi.call, "function", "the panel receives the remote call implementation");
+  const pendingCall = assert.rejects(
     Promise.resolve().then(() => injectedApi.call("stats")),
-    () => true
+    /expected host mount failure/
   );
   mounts[0].reject(new Error("expected host mount failure"));
+  await pendingCall;
   await new Promise((resolve) => setImmediate(resolve));
   injectedApi.retryMount();
   injectedApi.retryMount(); // An in-flight retry must not overwrite the pending call.
   await new Promise((resolve) => setImmediate(resolve));
   assert.equal(mounts.length, 2);
   mounts[1].resolve(() => {});
+  await new Promise((resolve) => setImmediate(resolve));
+  assert.deepEqual(await injectedApi.call("stats"), { configured: true });
+  mounts[0].reject(new Error("obsolete failure"));
   await new Promise((resolve) => setImmediate(resolve));
   assert.equal(injectedApi.mountError, "");
   mounts[0].reject(new Error("obsolete failure"));

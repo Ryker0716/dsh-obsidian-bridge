@@ -2119,6 +2119,9 @@ window.__ModuleLoader__.load({
         return result;
       }
 
+      // Keep the original live API object: it exposes the remote function and
+      // the mountError accessor without copying or detaching either one.
+      api.call = call;
       ctx.slots.inject("main", () => ctx.slots.register({
         name: "main",
         key: PANEL_ID,
